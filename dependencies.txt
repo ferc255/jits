@@ -1,0 +1,4 @@
+build-essential
+emacs
+libgccjit-8-dev
+tmux
