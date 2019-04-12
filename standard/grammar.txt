@@ -1,0 +1,14 @@
+E: E + T
+    $$ = $1 + $3
+T: T EXP NUM
+    $$ = powl($1, $3)
+T: LP SHIFT NUM RP
+    $$ = $3 * 10
+    
+    
+    E: T
+        $$ = $1
+        
+T: T DIV NUM
+    $$ = $1 / $3
+    
