@@ -1,0 +1,3 @@
+NUM: \d\d*
+PLUS: \+
+MUL: \*
