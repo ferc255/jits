@@ -36,40 +36,41 @@ void parse_data(token_t* token, char* input, int start_pos, int len)
 {
     char* temp = malloc(len);
     memcpy(temp, input + start_pos, len);
+
+    if (temp[0] == 'x')
+    {
+        token->data = X;
+        return;
+    }
     
     int i;
     for (i = 0; i < strlen(temp); i++)
     {
-        if (!isdigit(temp[i]))
+        if (!isdigit(temp[i]) && temp[i] != '.')
         {
             return;
         }
     }
-    token->data = atoi(temp);
+    token->data = strtold(temp, NULL);
 }
 
 
-token_t my_yylex()
+token_t my_yylex(char* data)
 {
     lex_automaton_t automaton =
     {
         #include "lex_automaton.h"
-    }; 
-    
-    static bool is_initialized = false;
+    };
+
     static char input[BUFFER_SIZE];
-    if (!is_initialized)
+    static int i = 0;
+
+    if (strcmp(data, "") != 0)
     {
-        char temp[BUFFER_SIZE];
-        while (fgets(temp, sizeof temp, stdin))
-        {
-            strcat(input, temp);
-        }
-        
-        is_initialized = true;
+        i = 0;
+        strcpy(input, data);
     }
     
-    static int i = 0;
     for ( ; i < strlen(input); )
     {
         if (input[i] == ' ' || input[i] == '\t' || input[i] == '\n')

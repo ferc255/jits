@@ -27,7 +27,7 @@ void parse_line(char* input, tables_t* tables, int* count)
     if (input[i] != '$' || input[i] == '\n') return;
     
     (*count)++;
-    printf("void apply_prod_%d(int* result, int stack_top)\n{\n    ", *count);
+    printf("void apply_prod_%d(long double* result, int stack_top)\n{\n    ", *count);
     printf("result[stack_top - %d] =", tables->grammar_size[*count] - 1);
     for ( ; input[i] != '='; i++);
     i++;

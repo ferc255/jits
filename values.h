@@ -6,6 +6,7 @@
 #define INVALID_TOKEN -1
 #define MAX_STATES 300
 #define MAX_TOKENS 300
+#define X -2
 
 const char NOT_CHAR = 254;
 
@@ -154,7 +155,7 @@ typedef struct grammar_t
 typedef struct token_t
 {
     int id;
-    int data;
+    long double data;
 } token_t;
 
 typedef struct tables_t

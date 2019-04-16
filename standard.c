@@ -8,36 +8,45 @@
 #include "executions.h"
 
 
-bool parse(tables_t* tables)
+bool parse(tables_t* tables, long double x)
 {
     int state[MAX_STATES] = {0};
-    int result[MAX_STATES] = {0};
+    long double result[MAX_STATES] = {0};
     int stack_top = 0;
-    
-    token_t token = my_yylex();
+    token_t token = my_yylex("3.2-x/(40-6.17)+((2*x+1)/4-7.7)*0.3-(x*4.1-7)/6+(7-x/(6.1-(x-0.2)*0.4))");
+
+    printf("token %Lf\n", token.data);
     
     while (true)
     {
         if (token.id == INVALID_TOKEN)
         {
-            printf("Invalid token has been found at %d-th position of input.",
-                   token.data);
+            printf("Invalid token has been found [id=%d, data=\"%Lf\"",
+                   token.id, token.data);
             return false;
         }
         
         int cur_state = state[stack_top];
         table_cell_t cell = tables->trans[cur_state][token.id];
-        
+
         switch (cell.action)
         {
             case AC_SHIFT:
                 stack_top++;
                 state[stack_top] = cell.num;
-                result[stack_top] = token.data;
-                token = my_yylex();
+                if (token.data != X)
+                {
+                    result[stack_top] = token.data;
+                }
+                else
+                {
+                    result[stack_top] = x;
+                }
+                token = my_yylex("");
                 break;
                 
             case AC_REDUCE:
+                printf("exec %d\n", cell.num);
                 apply[cell.num](&result, stack_top);                
                 stack_top -= tables->grammar_size[cell.num];
                 cur_state = state[stack_top];
@@ -46,7 +55,7 @@ bool parse(tables_t* tables)
                 break;
                 
             case AC_ACCEPT:
-                printf("Result: %d\n", result[1]);
+                printf("Result: %Lf\n", result[1]);
                 return true;
                 
             case AC_ERROR:
@@ -65,7 +74,7 @@ int main()
         #include "syn_tables.h"
     };
     
-    if (!parse(&tables))
+    if (!parse(&tables, 12))
     {
         return (EXIT_FAILURE);
     }

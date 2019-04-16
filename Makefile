@@ -1,8 +1,10 @@
-all: main
+all: standard libgccjit
 
-main: main.c syn_tables.h my_yylex.h lex_automaton.h executions.h
+standard: standard.c syn_tables.h my_yylex.h lex_automaton.h executions.h
+	$(CC) $< -lm -o $@
+
+libgccjit: libgccjit.c syn_tables.h my_yylex.h lex_automaton.h executions.h
 	$(CC) $< -lm -lgccjit -o $@
-
 
 syn_tables.h: GT
 	./$< > $@

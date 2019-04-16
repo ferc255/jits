@@ -1,6 +1,0 @@
-EXP: \*\*
-SHIFT: /->/
-DIV: /
-LP: \(
-RP: \)
-NUM: \d\d*
