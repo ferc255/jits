@@ -13,9 +13,7 @@ bool parse(tables_t* tables, long double x)
     int state[MAX_STATES] = {0};
     long double result[MAX_STATES] = {0};
     int stack_top = 0;
-    token_t token = my_yylex("3.2-x/(40-6.17)+((2*x+1)/4-7.7)*0.3-(x*4.1-7)/6+(7-x/(6.1-(x-0.2)*0.4))");
-
-    printf("token %Lf\n", token.data);
+    token_t token = my_yylex("((2*12+1)/4-7.7)*0.3+(12/(6.1-(12-0.2)))");
     
     while (true)
     {
@@ -46,7 +44,7 @@ bool parse(tables_t* tables, long double x)
                 break;
                 
             case AC_REDUCE:
-                printf("exec %d\n", cell.num);
+                printf("%d\n", cell.num);
                 apply[cell.num](&result, stack_top);                
                 stack_top -= tables->grammar_size[cell.num];
                 cur_state = state[stack_top];
