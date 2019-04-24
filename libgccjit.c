@@ -11,160 +11,138 @@
 
 //#include "executions.h"
 void apply_prod_0(gcc_jit_context* ctxt, gcc_jit_block* block,
-                  gcc_jit_type* int_type, gcc_jit_type* Lf_type,
-                  gcc_jit_rvalue* result, int stack_top) {}
+                  gcc_jit_rvalue* result, int stack_top,
+                  gcc_jit_type* int_type) {}
+                  
 void apply_prod_1(gcc_jit_context* ctxt, gcc_jit_block* block,
-                  gcc_jit_type* int_type, gcc_jit_type* Lf_type,
-                  gcc_jit_rvalue* result, int stack_top)
+                  gcc_jit_rvalue* result, int stack_top,
+                  gcc_jit_type* int_type)
 {
     //result[stack_top - 2] = result[stack_top - 2] + result[stack_top - 0];
 
-    gcc_jit_block_add_assignment(
+    // transient variable.
+    gcc_jit_block_add_assignment_op(
         block, NULL,
         gcc_jit_context_new_array_access(
             ctxt, NULL,
             result,
-            gcc_jit_context_new_rvalue_from_int(ctxt, int_type, stack_top - 2)
+            gcc_jit_context_new_rvalue_from_int(
+                ctxt, int_type, stack_top - 2)
         ),
-        gcc_jit_context_new_binary_op(
-            ctxt, NULL, GCC_JIT_BINARY_OP_PLUS, Lf_type,
-            gcc_jit_lvalue_as_rvalue(gcc_jit_context_new_array_access(
-                ctxt, NULL,
-                result,
-                gcc_jit_context_new_rvalue_from_int(
-                    ctxt, int_type, stack_top - 2)
-            )),
-            gcc_jit_lvalue_as_rvalue(gcc_jit_context_new_array_access(
-                ctxt, NULL,
-                result,
-                gcc_jit_context_new_rvalue_from_int(ctxt, int_type, stack_top)
-            ))
-        )
+        GCC_JIT_BINARY_OP_PLUS,
+        gcc_jit_lvalue_as_rvalue(gcc_jit_context_new_array_access(
+            ctxt, NULL,
+            result,
+            gcc_jit_context_new_rvalue_from_int(
+                ctxt, int_type, stack_top)
+        ))
     );
 }
 void apply_prod_2(gcc_jit_context* ctxt, gcc_jit_block* block,
-                  gcc_jit_type* int_type, gcc_jit_type* Lf_type,
-                  gcc_jit_rvalue* result, int stack_top)
+                  gcc_jit_rvalue* result, int stack_top,
+                  gcc_jit_type* int_type)
 {
     // result[stack_top - 2] = result[stack_top - 2] - result[stack_top - 0];
 
-    gcc_jit_block_add_assignment(
+    gcc_jit_block_add_assignment_op(
         block, NULL,
         gcc_jit_context_new_array_access(
             ctxt, NULL,
             result,
-            gcc_jit_context_new_rvalue_from_int(ctxt, int_type, stack_top - 2)
+            gcc_jit_context_new_rvalue_from_int(
+                ctxt, int_type, stack_top - 2)
         ),
-        gcc_jit_context_new_binary_op(
-            ctxt, NULL, GCC_JIT_BINARY_OP_MINUS, Lf_type,
-            gcc_jit_lvalue_as_rvalue(gcc_jit_context_new_array_access(
-                ctxt, NULL,
-                result,
-                gcc_jit_context_new_rvalue_from_int(
-                    ctxt, int_type, stack_top - 2)
-            )),
-            gcc_jit_lvalue_as_rvalue(gcc_jit_context_new_array_access(
-                ctxt, NULL,
-                result,
-                gcc_jit_context_new_rvalue_from_int(ctxt, int_type, stack_top)
-            ))
-        )
+        GCC_JIT_BINARY_OP_MINUS,
+        gcc_jit_lvalue_as_rvalue(gcc_jit_context_new_array_access(
+            ctxt, NULL,
+            result,
+            gcc_jit_context_new_rvalue_from_int(
+                ctxt, int_type, stack_top)
+        ))
     );
 }
 void apply_prod_3(gcc_jit_context* ctxt, gcc_jit_block* block,
-                  gcc_jit_type* int_type, gcc_jit_type* Lf_type,
-                  gcc_jit_rvalue* result, int stack_top)
+                  gcc_jit_rvalue* result, int stack_top,
+                  gcc_jit_type* int_type)
 {
     // result[stack_top - 0] = result[stack_top - 0];
 }
 void apply_prod_4(gcc_jit_context* ctxt, gcc_jit_block* block,
-                  gcc_jit_type* int_type, gcc_jit_type* Lf_type,
-                  gcc_jit_rvalue* result, int stack_top)
+                  gcc_jit_rvalue* result, int stack_top,
+                  gcc_jit_type* int_type)
 {
     // result[stack_top - 2] = result[stack_top - 2] * result[stack_top - 0];
 
-    gcc_jit_block_add_assignment(
+    gcc_jit_block_add_assignment_op(
         block, NULL,
         gcc_jit_context_new_array_access(
             ctxt, NULL,
             result,
-            gcc_jit_context_new_rvalue_from_int(ctxt, int_type, stack_top - 2)
+            gcc_jit_context_new_rvalue_from_int(
+                ctxt, int_type, stack_top - 2)
         ),
-        gcc_jit_context_new_binary_op(
-            ctxt, NULL, GCC_JIT_BINARY_OP_MULT, Lf_type,
-            gcc_jit_lvalue_as_rvalue(gcc_jit_context_new_array_access(
-                ctxt, NULL,
-                result,
-                gcc_jit_context_new_rvalue_from_int(
-                    ctxt, int_type, stack_top - 2)
-            )),
-            gcc_jit_lvalue_as_rvalue(gcc_jit_context_new_array_access(
-                ctxt, NULL,
-                result,
-                gcc_jit_context_new_rvalue_from_int(ctxt, int_type, stack_top)
-            ))
-        )
+        GCC_JIT_BINARY_OP_MULT,
+        gcc_jit_lvalue_as_rvalue(gcc_jit_context_new_array_access(
+            ctxt, NULL,
+            result,
+            gcc_jit_context_new_rvalue_from_int(
+                ctxt, int_type, stack_top)
+        ))
     );
 }
 void apply_prod_5(gcc_jit_context* ctxt, gcc_jit_block* block,
-                  gcc_jit_type* int_type, gcc_jit_type* Lf_type,
-                  gcc_jit_rvalue* result, int stack_top)
+                  gcc_jit_rvalue* result, int stack_top,
+                  gcc_jit_type* int_type)
 {
     // result[stack_top - 2] = result[stack_top - 2] / result[stack_top - 0];
-
-    gcc_jit_block_add_assignment(
+    gcc_jit_block_add_assignment_op(
         block, NULL,
         gcc_jit_context_new_array_access(
             ctxt, NULL,
             result,
-            gcc_jit_context_new_rvalue_from_int(ctxt, int_type, stack_top - 2)
+            gcc_jit_context_new_rvalue_from_int(
+                ctxt, int_type, stack_top - 2)
         ),
-        gcc_jit_context_new_binary_op(
-            ctxt, NULL, GCC_JIT_BINARY_OP_DIVIDE, Lf_type,
-            gcc_jit_lvalue_as_rvalue(gcc_jit_context_new_array_access(
-                ctxt, NULL,
-                result,
-                gcc_jit_context_new_rvalue_from_int(
-                    ctxt, int_type, stack_top - 2)
-            )),
-            gcc_jit_lvalue_as_rvalue(gcc_jit_context_new_array_access(
-                ctxt, NULL,
-                result,
-                gcc_jit_context_new_rvalue_from_int(ctxt, int_type, stack_top)
-            ))
-        )
+        GCC_JIT_BINARY_OP_DIVIDE,
+        gcc_jit_lvalue_as_rvalue(gcc_jit_context_new_array_access(
+            ctxt, NULL,
+            result,
+            gcc_jit_context_new_rvalue_from_int(
+                ctxt, int_type, stack_top)
+        ))
     );
 }
 void apply_prod_6(gcc_jit_context* ctxt, gcc_jit_block* block,
-                  gcc_jit_type* int_type, gcc_jit_type* Lf_type,
-                  gcc_jit_rvalue* result, int stack_top)
+                  gcc_jit_rvalue* result, int stack_top,
+                  gcc_jit_type* int_type)
 {
-    //result[stack_top - 0] = result[stack_top - 0];
+    // result[stack_top - 0] = result[stack_top - 0];
 }
 void apply_prod_7(gcc_jit_context* ctxt, gcc_jit_block* block,
-                  gcc_jit_type* int_type, gcc_jit_type* Lf_type,
-                  gcc_jit_rvalue* result, int stack_top)
+                  gcc_jit_rvalue* result, int stack_top,
+                  gcc_jit_type* int_type)
 {
-    //result[stack_top - 0] = result[stack_top - 0];
+    // result[stack_top - 0] = result[stack_top - 0];
 }
 void apply_prod_8(gcc_jit_context* ctxt, gcc_jit_block* block,
-                  gcc_jit_type* int_type, gcc_jit_type* Lf_type,
-                  gcc_jit_rvalue* result, int stack_top)
+                  gcc_jit_rvalue* result, int stack_top,
+                  gcc_jit_type* int_type)
 {
-    //result[stack_top - 0] = result[stack_top - 0];
+    // result[stack_top - 0] = result[stack_top - 0];
 }
 void apply_prod_9(gcc_jit_context* ctxt, gcc_jit_block* block,
-                  gcc_jit_type* int_type, gcc_jit_type* Lf_type,
-                  gcc_jit_rvalue* result, int stack_top)
+                  gcc_jit_rvalue* result, int stack_top,
+                  gcc_jit_type* int_type)
 {
-    //result[stack_top - 2] = result[stack_top - 1];
+    // result[stack_top - 2] = result[stack_top - 1];
 
     gcc_jit_block_add_assignment(
         block, NULL,
         gcc_jit_context_new_array_access(
             ctxt, NULL,
             result,
-            gcc_jit_context_new_rvalue_from_int(ctxt, int_type, stack_top - 2)
+            gcc_jit_context_new_rvalue_from_int(
+                ctxt, int_type, stack_top - 2)
         ),
         gcc_jit_lvalue_as_rvalue(gcc_jit_context_new_array_access(
             ctxt, NULL,
@@ -187,6 +165,7 @@ void (*apply[])() =
     apply_prod_8,
     apply_prod_9,
 };
+
 
 
 void create_code(gcc_jit_context* ctxt, tables_t* tables)
@@ -212,23 +191,17 @@ void create_code(gcc_jit_context* ctxt, tables_t* tables)
     gcc_jit_block* block =
         gcc_jit_function_new_block(func, "main_block");
 
-    //gcc_jit_lvalue* state =
-    //    gcc_jit_function_new_local(func, NULL, array_int_type, "state");
     gcc_jit_rvalue* result =
         gcc_jit_lvalue_as_rvalue(
             gcc_jit_function_new_local(func, NULL, array_Lf_type, "result"));
-    //gcc_jit_lvalue* stack_top =
-    //    gcc_jit_function_new_local(func, NULL, int_type, "stack_top");
-    //gcc_jit_block_add_assignment(
-    //    block, NULL, stack_top, gcc_jit_context_zero(ctxt, int_type));
-
+    
     gcc_jit_rvalue* x =
         gcc_jit_param_as_rvalue(x_val);
 
     int state[MAX_STATES] = {0};
     int stack_top = 0;
   
-    token_t token = my_yylex("((2*12+1)/4-7.7)*0.3+(12/(6.1-(12-0.2)))");
+    token_t token = my_yylex("3.2-12/(40-6.17)+((2*12+1)/4-7.7)*0.3-(12*4.1-7)/6+(7-12/(6.1-(12-0.2)*0.4))");
 
     while (true)
     {
@@ -259,18 +232,15 @@ void create_code(gcc_jit_context* ctxt, tables_t* tables)
                     gcc_jit_context_new_rvalue_from_double(
                         ctxt, Lf_type, token.data)
                 );
-                
-                //result[stack_top] = token.data;
+
                 token = my_yylex("");
 
                 break;
                 
             case AC_REDUCE:
-                printf("%d\n", cell.num);
-
                 apply[cell.num](ctxt, block,
-                                int_type, Lf_type,
-                                result, stack_top);
+                                result, stack_top,
+                                int_type);
                 stack_top -= tables->grammar_size[cell.num];
                 cur_state = state[stack_top];
                 state[++stack_top] = tables->
@@ -286,7 +256,9 @@ void create_code(gcc_jit_context* ctxt, tables_t* tables)
                             ctxt,
                             NULL,
                             result,
-                            gcc_jit_context_one(ctxt, int_type)
+                            gcc_jit_context_new_rvalue_from_int(
+                                ctxt, int_type, 1)
+                            //gcc_jit_context_one(ctxt, int_type)
                         )
                     )
                 );
@@ -349,7 +321,7 @@ int main()
     */
 
     fn_type dummy = get_jit_function(&tables);
-    printf("%Lf\n", dummy(2));
+    printf("%Lf\n", dummy(3));
 
     return (EXIT_SUCCESS);
 }
