@@ -4,23 +4,26 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "values.h"
 #include "my_yylex.h"
 
 
+#define ATTEMPTS_PER_TEST 1
+#define MAX_STATEMENT_SIZE 15 // < 21
+
+
 //#include "executions.h"
 void apply_prod_0(gcc_jit_context* ctxt, gcc_jit_block* block,
                   gcc_jit_rvalue* result, int stack_top,
-                  gcc_jit_type* int_type) {}
-                  
+                  gcc_jit_type* int_type) {}                  
 void apply_prod_1(gcc_jit_context* ctxt, gcc_jit_block* block,
                   gcc_jit_rvalue* result, int stack_top,
                   gcc_jit_type* int_type)
 {
     //result[stack_top - 2] = result[stack_top - 2] + result[stack_top - 0];
 
-    // transient variable.
     gcc_jit_block_add_assignment_op(
         block, NULL,
         gcc_jit_context_new_array_access(
@@ -95,6 +98,7 @@ void apply_prod_5(gcc_jit_context* ctxt, gcc_jit_block* block,
                   gcc_jit_type* int_type)
 {
     // result[stack_top - 2] = result[stack_top - 2] / result[stack_top - 0];
+
     gcc_jit_block_add_assignment_op(
         block, NULL,
         gcc_jit_context_new_array_access(
@@ -168,7 +172,7 @@ void (*apply[])() =
 
 
 
-void create_code(gcc_jit_context* ctxt, tables_t* tables)
+void create_code(gcc_jit_context* ctxt, tables_t* tables, char* statement)
 {
     gcc_jit_type* int_type =
         gcc_jit_context_get_type(ctxt, GCC_JIT_TYPE_INT);
@@ -201,7 +205,7 @@ void create_code(gcc_jit_context* ctxt, tables_t* tables)
     int state[MAX_STATES] = {0};
     int stack_top = 0;
   
-    token_t token = my_yylex("3.2-12/(40-6.17)+((2*12+1)/4-7.7)*0.3-(12*4.1-7)/6+(7-12/(6.1-(12-0.2)*0.4))");
+    token_t token = my_yylex(statement);
 
     while (true)
     {
@@ -221,6 +225,18 @@ void create_code(gcc_jit_context* ctxt, tables_t* tables)
                 stack_top++;
                 state[stack_top] = cell.num;
 
+                gcc_jit_rvalue* rval;
+                
+                if (token.data != X)
+                {
+                    rval = gcc_jit_context_new_rvalue_from_double(
+                        ctxt, Lf_type, token.data);
+                }
+                else
+                {
+                    rval = x;
+                }
+
                 gcc_jit_block_add_assignment(
                     block, NULL,
                     gcc_jit_context_new_array_access(
@@ -229,8 +245,7 @@ void create_code(gcc_jit_context* ctxt, tables_t* tables)
                         gcc_jit_context_new_rvalue_from_int(
                             ctxt, int_type, stack_top)
                     ),
-                    gcc_jit_context_new_rvalue_from_double(
-                        ctxt, Lf_type, token.data)
+                    rval
                 );
 
                 token = my_yylex("");
@@ -276,7 +291,7 @@ void create_code(gcc_jit_context* ctxt, tables_t* tables)
 
 typedef long double (*fn_type)(long double);
 
-fn_type get_jit_function(tables_t* tables)
+fn_type get_jit_function(tables_t* tables, char* statement)
 {
     gcc_jit_context* ctxt = gcc_jit_context_acquire();
     if (!ctxt)
@@ -285,7 +300,7 @@ fn_type get_jit_function(tables_t* tables)
         exit(0);
     }
 
-    create_code(ctxt, tables);
+    create_code(ctxt, tables, statement);
 
     gcc_jit_result* result = gcc_jit_context_compile(ctxt);
     if (!result)
@@ -306,6 +321,53 @@ fn_type get_jit_function(tables_t* tables)
 }
 
 
+void measure_time(tables_t* tables, char* statements[20])
+{
+    double timer[MAX_STATEMENT_SIZE];
+    int len;
+    for (len = 0; len < MAX_STATEMENT_SIZE; len++)
+    {
+        printf("[len = %d]\n", len + 1);
+
+        fn_type calculate = get_jit_function(tables, statements[len]);
+                                             
+        double sum = 0;
+        int attempt;
+        for (attempt = 0; attempt < ATTEMPTS_PER_TEST; attempt++)
+        {
+            double start_time = clock();
+
+            int x;
+            for (x = 0; x < 1e7; x++)
+            {
+                double st = clock();
+                //printf("[x %d] ", x);
+                //parse(tables, statements[len], x);
+                calculate(x);
+                //printf("[total] %.0f\n\n", clock() - st);
+            }
+
+            double elapsed = (clock() - start_time) / CLOCKS_PER_SEC;
+            sum += elapsed;
+
+            printf("Elapsed time: %.3f sec\n", elapsed);
+        }
+        timer[len] = sum / attempt;
+
+        printf("_________________________________\n");
+        printf("Average elapsed time: %.3f sec\n", sum / attempt);
+    }
+
+    printf("\n");
+    int i;
+    for (i = 0; i < MAX_STATEMENT_SIZE; i++)
+    {
+        printf("recalc,%d,%.3lf\n", i + 1, timer[i]);
+    }
+    printf("\n");
+}
+
+
 int main()
 {
     tables_t tables = 
@@ -313,15 +375,20 @@ int main()
         #include "syn_tables.h"
     };
 
-    /*
-    if (!parse(&tables))
+    char* statements[20] =
     {
-        return (EXIT_FAILURE);
-    }
+        #include "statements.h"
+    };
+
+    /*
+    fn_type dummy = get_jit_function(&tables, statements[19]);
+    printf("%Lf\n", dummy(12)); // -6.318700
+    dummy = get_jit_function(&tables, statements[11]);
+    printf("%Lf\n", dummy(50)); // -198.012978
     */
 
-    fn_type dummy = get_jit_function(&tables);
-    printf("%Lf\n", dummy(3));
+    measure_time(&tables, statements);
+    
 
     return (EXIT_SUCCESS);
 }
