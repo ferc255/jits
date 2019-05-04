@@ -9,9 +9,7 @@
 #include "values.h"
 #include "my_yylex.h"
 
-
-#define ATTEMPTS_PER_TEST 1
-#define MAX_STATEMENT_SIZE 15 // < 21
+#include "experiment.h"
 
 
 //#include "executions.h"
@@ -338,7 +336,7 @@ void measure_time(tables_t* tables, char* statements[20])
             double start_time = clock();
 
             int x;
-            for (x = 0; x < 1e7; x++)
+            for (x = 0; x < X_RANGE; x++)
             {
                 double st = clock();
                 //printf("[x %d] ", x);

@@ -15,6 +15,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "forwarded_port", guest: 8888, host: 8845
   config.vm.network "private_network", type: "dhcp"
 
+
   config.vm.provider "virtualbox" do |vb|
     vb.name = "vb_jits"
     vb.customize ["modifyvm", :id, "--cpus", "2"]
