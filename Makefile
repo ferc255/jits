@@ -1,6 +1,6 @@
-all: standard libgccjit ast
+all: recalc libgccjit ast
 
-standard: standard.c syn_tables.h my_yylex.h lex_automaton.h executions.h experiment.h
+recalc: recalc.c syn_tables.h my_yylex.h lex_automaton.h executions.h experiment.h
 	$(CC) $< -lm -o $@
 
 libgccjit: libgccjit.c syn_tables.h my_yylex.h lex_automaton.h executions.h experiment.h

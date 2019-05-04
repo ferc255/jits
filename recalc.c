@@ -11,10 +11,6 @@
 #include "experiment.h"
 
 
-#define ATTEMPTS_PER_TEST 5
-#define MAX_STATEMENT_SIZE 20
-
-
 long double parse(tables_t* tables, char* statement, long double x)
 {
     int state[MAX_STATES] = {0};

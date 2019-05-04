@@ -14,7 +14,7 @@ def main():
     dataframe = pandas.read_csv('data.csv')
     seaborn.lmplot(x='expr_len', y='time', hue="parser", data=dataframe,
                    truncate=True, height=8, aspect=1.2)
-    pyplot.xlim(0, 16)
+    pyplot.xlim(0, 20)
     pyplot.yticks(range(0, 16))
     # pyplot.yscale("log")
     pyplot.grid(True)

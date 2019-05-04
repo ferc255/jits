@@ -360,7 +360,7 @@ void measure_time(tables_t* tables, char* statements[20])
     int i;
     for (i = 0; i < MAX_STATEMENT_SIZE; i++)
     {
-        printf("recalc,%d,%.3lf\n", i + 1, timer[i]);
+        printf("libgccjit,%d,%.3lf\n", i + 1, timer[i]);
     }
     printf("\n");
 }
