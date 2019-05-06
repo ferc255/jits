@@ -319,41 +319,45 @@ fn_type get_jit_function(tables_t* tables, char* statement)
 }
 
 
+double test_for_one_len(tables_t* tables, char* statement)
+{
+    fn_type calculate = get_jit_function(tables, statement);
+
+    double sum = 0;
+    int attempt;
+    for (attempt = 0; attempt < ATTEMPTS_PER_TEST; attempt++)
+    {
+        double start_time = clock();
+
+        int x;
+        for (x = 0; x < X_RANGE; x++)
+        {
+            calculate(x);
+        }
+
+        double elapsed = (clock() - start_time) / CLOCKS_PER_SEC;
+        sum += elapsed;
+
+        printf("Elapsed time: %.3f sec\n", elapsed);
+    }
+
+    return sum;
+}
+
+
 void measure_time(tables_t* tables, char* statements[20])
 {
     double timer[MAX_STATEMENT_SIZE];
     int len;
-    for (len = 0; len < MAX_STATEMENT_SIZE; len++)
+    for (len = MIN_STATEMENT_SIZE; len < MAX_STATEMENT_SIZE; len++)
     {
         printf("[len = %d]\n", len + 1);
 
-        fn_type calculate = get_jit_function(tables, statements[len]);
-                                             
-        double sum = 0;
-        int attempt;
-        for (attempt = 0; attempt < ATTEMPTS_PER_TEST; attempt++)
-        {
-            double start_time = clock();
-
-            int x;
-            for (x = 0; x < X_RANGE; x++)
-            {
-                double st = clock();
-                //printf("[x %d] ", x);
-                //parse(tables, statements[len], x);
-                calculate(x);
-                //printf("[total] %.0f\n\n", clock() - st);
-            }
-
-            double elapsed = (clock() - start_time) / CLOCKS_PER_SEC;
-            sum += elapsed;
-
-            printf("Elapsed time: %.3f sec\n", elapsed);
-        }
-        timer[len] = sum / attempt;
+        double sum = test_for_one_len(tables, statements[len]);
+        timer[len] = sum / ATTEMPTS_PER_TEST;
 
         printf("_________________________________\n");
-        printf("Average elapsed time: %.3f sec\n", sum / attempt);
+        printf("Average elapsed time: %.3f sec\n", timer[len]);
     }
 
     printf("\n");
@@ -378,6 +382,8 @@ int main()
         #include "statements.h"
     };
 
+    //test_for_one_len(&tables, statements[19]);
+
     /*
     fn_type dummy = get_jit_function(&tables, statements[19]);
     printf("%Lf\n", dummy(12)); // -6.318700
@@ -386,6 +392,8 @@ int main()
     */
 
     measure_time(&tables, statements);
+
+    
     
 
     return (EXIT_SUCCESS);

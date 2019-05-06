@@ -68,39 +68,48 @@ long double parse(tables_t* tables, char* statement, long double x)
 }
 
 
+double test_for_one_len(tables_t* tables, char* statement)
+{
+    double sum = 0;
+    int attempt;
+    for (attempt = 0; attempt < ATTEMPTS_PER_TEST; attempt++)
+    {
+        double start_time = clock();
+
+        int x;
+        for (x = 0; x < X_RANGE; x++)
+        {
+            parse(tables, statement, x);
+        }
+
+        double elapsed = (clock() - start_time) / CLOCKS_PER_SEC;
+        sum += elapsed;
+
+        printf("Elapsed time: %.3f sec\n", elapsed);
+    }
+
+    return sum;
+}
+
+
 void measure_time(tables_t* tables, char* statements[20])
 {
     double timer[MAX_STATEMENT_SIZE];
     int len;
-    for (len = 0; len < MAX_STATEMENT_SIZE; len++)
+    for (len = MIN_STATEMENT_SIZE; len < MAX_STATEMENT_SIZE; len++)
     {
         printf("[len = %d]\n", len + 1);
-        double sum = 0;
-        int attempt;
-        for (attempt = 0; attempt < ATTEMPTS_PER_TEST; attempt++)
-        {
-            double start_time = clock();
-
-            int x;
-            for (x = 0; x < X_RANGE; x++)
-            {
-                parse(tables, statements[len], x);
-            }
-
-            double elapsed = (clock() - start_time) / CLOCKS_PER_SEC;
-            sum += elapsed;
-
-            printf("Elapsed time: %.3f sec\n", elapsed);
-        }
-        timer[len] = sum / attempt;
+        
+        double sum = test_for_one_len(tables, statements[len]);
+        timer[len] = sum / ATTEMPTS_PER_TEST;
 
         printf("_________________________________\n");
-        printf("Average elapsed time: %.3f sec\n", sum / attempt);
+        printf("Average elapsed time: %.3f sec\n", timer[len]);
     }
 
     printf("\n");
     int i;
-    for (i = 0; i < MAX_STATEMENT_SIZE; i++)
+    for (i = MIN_STATEMENT_SIZE; i < MAX_STATEMENT_SIZE; i++)
     {
         printf("recalc,%d,%.3lf\n", i + 1, timer[i]);
     }
@@ -120,10 +129,12 @@ int main()
         #include "statements.h"
     };
 
+    test_for_one_len(&tables, statements[13]);
+
     //printf("%Lf\n", parse(&tables, statements[19], 12)); // -6.318700
     //printf("%Lf\n", parse(&tables, statements[11], 50)); // -198.012978
 
-    measure_time(&tables, statements);
+    //measure_time(&tables, statements);
     
     return (EXIT_SUCCESS);
 }

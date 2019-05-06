@@ -130,46 +130,54 @@ long double calculate(ast_node_t* arena, int arena_top, long double x,
 }
 
 
+double test_for_one_len(tables_t* tables, char* statement, ast_node_t* arena)
+{
+    int arena_top = -1;
+    build_ast(tables, statement, arena, &arena_top);
+
+    double sum = 0;
+    int attempt;
+    for (attempt = 0; attempt < ATTEMPTS_PER_TEST; attempt++)
+    {
+        double start_time = clock();
+
+        int x;
+        for (x = 0; x < X_RANGE; x++)
+        {
+            double st = clock();
+            calculate(arena, arena_top, x, tables);
+        }
+
+        double elapsed = (clock() - start_time) / CLOCKS_PER_SEC;
+        sum += elapsed;
+
+        printf("Elapsed time: %.3f sec\n", elapsed);
+    }
+
+    return sum;
+}
+
+
 void measure_time(tables_t* tables, char* statements[20])
 {
     ast_node_t arena[BUFFER_SIZE];
     double timer[MAX_STATEMENT_SIZE];
 
     int len;
-    for (len = 0; len < MAX_STATEMENT_SIZE; len++)
+    for (len = MIN_STATEMENT_SIZE; len < MAX_STATEMENT_SIZE; len++)
     {
         printf("[len = %d]\n", len + 1);
       
-        int arena_top = -1;
-        build_ast(tables, statements[len], arena, &arena_top);
-        
-        double sum = 0;
-        int attempt;
-        for (attempt = 0; attempt < ATTEMPTS_PER_TEST; attempt++)
-        {
-            double start_time = clock();
-
-            int x;
-            for (x = 0; x < X_RANGE; x++)
-            {
-                double st = clock();
-                calculate(arena, arena_top, x, tables);
-            }
-
-            double elapsed = (clock() - start_time) / CLOCKS_PER_SEC;
-            sum += elapsed;
-
-            printf("Elapsed time: %.3f sec\n", elapsed);
-        }
-        timer[len] = sum / attempt;
+        double sum = test_for_one_len(tables, statements[len], arena);
+        timer[len] = sum / ATTEMPTS_PER_TEST;
 
         printf("_________________________________\n");
-        printf("Average elapsed time: %.3f sec\n", sum / attempt);
+        printf("Average elapsed time: %.3f sec\n", timer[len]);
     }
 
     printf("\n");
     int i;
-    for (i = 0; i < MAX_STATEMENT_SIZE; i++)
+    for (i = MIN_STATEMENT_SIZE; i < MAX_STATEMENT_SIZE; i++)
     {
         printf("ast,%d,%.3lf\n", i + 1, timer[i]);
     }
@@ -189,6 +197,9 @@ int main()
         #include "statements.h"
     };
 
+    
+    //ast_node_t arena[BUFFER_SIZE];
+    //test_for_one_len(&tables, statements[10], arena);
     
     /*
     int arena_top = -1;
