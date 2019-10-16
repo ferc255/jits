@@ -39,7 +39,7 @@ PLR: parse_lex_rules.c
 executions.h: BE grammar.txt
 	./$< < $(word 2, $^) > $@
 
-BE: build_executions.c
+BE: build_executions.c syn_tables.h
 	$(CC) $< -o $@
 
 

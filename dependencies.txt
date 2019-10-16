@@ -3,3 +3,4 @@ emacs
 libgccjit-8-dev
 python3-pip
 tmux
+xclip
