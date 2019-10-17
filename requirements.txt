@@ -1,3 +1,4 @@
+hypothesis
+matplotlib
 pandas
 seaborn
-matplotlib
