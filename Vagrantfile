@@ -10,10 +10,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
   config.vm.hostname = "jits-host"
 
-  config.vm.synced_folder ".", "/vagrant", type: "nfs"
+  #config.vm.synced_folder ".", "/vagrant", type: "nfs"
   
-  config.vm.network "forwarded_port", guest: 8888, host: 8845
-  config.vm.network "private_network", type: "dhcp"
+  config.vm.network "forwarded_port", guest: 8901, host: 8801
+  #config.vm.network "private_network", type: "dhcp"
 
 
   config.vm.provider "virtualbox" do |vb|
