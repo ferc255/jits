@@ -31,12 +31,20 @@ int calc_max_match(lex_automaton_t* automaton, char* input, int start_pos,
     return result;
 }
 
+char temp[BUFFER_SIZE];
 
 void parse_data(token_t* token, char* input, int start_pos, int len)
 {
-    char* temp = malloc(len + 1);
-    memcpy(temp, input + start_pos, len);
+    // That doesn't work for some reasons.
+    //char* temp = malloc(len + 1);
+    //memcpy(temp, input + start_pos, len);
+    int j;
+    for (j = 0; j < len; j++)
+    {
+        temp[j] = input[start_pos + j];
+    }
     temp[len] = '\0';
+    //
 
     if (temp[0] == 'x')
     {

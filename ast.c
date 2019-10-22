@@ -185,7 +185,7 @@ void measure_time(tables_t* tables, char* statements[20])
 }
 
 
-int main()
+int main(int argc, char* argv[])
 {
     tables_t tables = 
     {
@@ -197,20 +197,33 @@ int main()
         #include "statements.h"
     };
 
-    
-    //ast_node_t arena[BUFFER_SIZE];
-    //test_for_one_len(&tables, statements[10], arena);
-    
-    /*
-    int arena_top = -1;
-    ast_node_t arena[BUFFER_SIZE];
-    build_ast(&tables, statements[19], arena, &arena_top);
-    printf("%Lf\n", calculate(arena, arena_top, 12, &tables));  // -6.318700
-    build_ast(&tables, statements[11], arena, &arena_top);
-    printf("%Lf\n", calculate(arena, arena_top, 50, &tables));  // -198.012978
-    */
+    if (argc > 1)
+    {
+        ast_node_t arena[BUFFER_SIZE];
+        int arena_top = -1;
+        build_ast(&tables, argv[1], arena, &arena_top);
+        printf("%.17Lf\n", calculate(arena, arena_top, 0, &tables));
+    }
+    else
+    {
 
-    measure_time(&tables, statements);
+
+
+        //ast_node_t arena[BUFFER_SIZE];
+        //test_for_one_len(&tables, statements[10], arena);
+
+        /*
+        int arena_top = -1;
+        ast_node_t arena[BUFFER_SIZE];
+        build_ast(&tables, statements[19], arena, &arena_top);
+        printf("%Lf\n", calculate(arena, arena_top, 12, &tables));  // -6.318700
+        build_ast(&tables, statements[11], arena, &arena_top);
+        printf("%Lf\n", calculate(arena, arena_top, 50, &tables));  // -198.012978
+        */
+
+        measure_time(&tables, statements);
+    }
+
     
     return (EXIT_SUCCESS);
 }

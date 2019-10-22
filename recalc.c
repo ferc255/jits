@@ -117,7 +117,7 @@ void measure_time(tables_t* tables, char* statements[20])
 }
 
 
-int main()
+int main(int argc, char* argv[])
 {
     tables_t tables = 
     {
@@ -129,12 +129,19 @@ int main()
         #include "statements.h"
     };
 
-    test_for_one_len(&tables, statements[13]);
+    if (argc > 1)
+    {
+        printf("%.17Lf\n", parse(&tables, argv[1], 0));
+    }
+    else
+    {
+        test_for_one_len(&tables, statements[16]);
 
-    //printf("%Lf\n", parse(&tables, statements[19], 12)); // -6.318700
-    //printf("%Lf\n", parse(&tables, statements[11], 50)); // -198.012978
+        //printf("%Lf\n", parse(&tables, statements[19], 12)); // -6.318700
+        //printf("%Lf\n", parse(&tables, statements[11], 50)); // -198.012978
 
-    //measure_time(&tables, statements);
+        //measure_time(&tables, statements);
+    }
     
     return (EXIT_SUCCESS);
 }

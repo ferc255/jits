@@ -370,7 +370,7 @@ void measure_time(tables_t* tables, char* statements[20])
 }
 
 
-int main()
+int main(int argc, char* argv[])
 {
     tables_t tables = 
     {
@@ -382,17 +382,25 @@ int main()
         #include "statements.h"
     };
 
-    //test_for_one_len(&tables, statements[19]);
+    if (argc > 1)
+    {
+        fn_type calculate = get_jit_function(&tables, statements[0]);
+        printf("%.17Lf\n", calculate(0));
+    }
+    else
+    {
 
-    /*
-    fn_type dummy = get_jit_function(&tables, statements[19]);
-    printf("%Lf\n", dummy(12)); // -6.318700
-    dummy = get_jit_function(&tables, statements[11]);
-    printf("%Lf\n", dummy(50)); // -198.012978
-    */
+        //test_for_one_len(&tables, statements[19]);
 
-    measure_time(&tables, statements);
+        /*
+          fn_type dummy = get_jit_function(&tables, statements[19]);
+          printf("%Lf\n", dummy(12)); // -6.318700
+          dummy = get_jit_function(&tables, statements[11]);
+          printf("%Lf\n", dummy(50)); // -198.012978
+        */
 
+        measure_time(&tables, statements);
+    }
     
     
 
