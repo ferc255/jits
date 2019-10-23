@@ -1,4 +1,4 @@
-all: recalc libgccjit ast
+all: recalc libgccjit ast libjitparser
 
 recalc: recalc.c syn_tables.h my_yylex.h lex_automaton.h executions.h experiment.h
 	$(CC) $< -lm -o $@
@@ -8,6 +8,9 @@ libgccjit: libgccjit.c syn_tables.h my_yylex.h lex_automaton.h executions.h expe
 
 ast: ast.c syn_tables.h my_yylex.h lex_automaton.h executions.h experiment.h
 	$(CC) $< -lm -o $@
+
+libjitparser: libjitparser.c
+	gcc $< -ljit -lpthread -lm -ldl -o $@
 
 
 syn_tables.h: GT

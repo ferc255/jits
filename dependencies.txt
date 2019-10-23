@@ -1,6 +1,13 @@
+autoconf
+automake
+bison
 build-essential
 emacs
+flex
 libgccjit-8-dev
+libtool
+pkg-config
 python3-pip
+texinfo
 tmux
 xclip
