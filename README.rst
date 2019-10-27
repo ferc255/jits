@@ -30,8 +30,9 @@ How to install libjit
 
        $ gcc my_app.c -ljit -lpthread -lm -ldl -o app
 
-   Now you can run it:
+   Before you can run it, add /usr/local/lib/ (or any other directory that contains libjit.so.0) to LD_LIBRARY_PATH.
 
    .. code-block:: bash
 
+       $ LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/
        $ ./app

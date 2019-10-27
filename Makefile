@@ -1,4 +1,7 @@
-all: recalc libgccjit ast libjitparser
+all: recalc libgccjit ast libjitparser nfloatbug
+
+nfloatbug: nfloatbug.c
+	gcc $< -ljit -lpthread -lm -ldl -o $@
 
 recalc: recalc.c syn_tables.h my_yylex.h lex_automaton.h executions.h experiment.h
 	$(CC) $< -lm -o $@
@@ -9,7 +12,7 @@ libgccjit: libgccjit.c syn_tables.h my_yylex.h lex_automaton.h executions.h expe
 ast: ast.c syn_tables.h my_yylex.h lex_automaton.h executions.h experiment.h
 	$(CC) $< -lm -o $@
 
-libjitparser: libjitparser.c
+libjitparser: libjitparser.c syn_tables.h my_yylex.h lex_automaton.h executions.h experiment.h
 	gcc $< -ljit -lpthread -lm -ldl -o $@
 
 

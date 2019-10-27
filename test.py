@@ -86,7 +86,12 @@ class ExpressionEvaluationTest(unittest.TestCase):
     @settings(max_examples=1000)
     @given(expr)
     def test_ast(self, expr):
-        self._gen_test_and_verify(expr, 'ast')    
+        self._gen_test_and_verify(expr, 'ast')
+
+    @settings(max_examples=1000)
+    @given(expr)
+    def test_libjit(self, expr):
+        self._gen_test_and_verify(expr, 'libjitparser')    
 
     
 if __name__ == '__main__':
