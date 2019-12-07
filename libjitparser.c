@@ -140,54 +140,6 @@ jit_function_t create_code(jit_context_t ctxt, tables_t* tables,
 
     jit_function_t function = jit_function_create(ctxt, signature);
 
-
-    /*
-    jit_value_t first_letter = jit_value_create_float64_constant(function, jit_type_sys_double, (long double)statement[0] - '0');
-    jit_value_t res = jit_value_create(function, jit_type_sys_long_double);
-    jit_insn_store(function, res, first_letter);
-
-    jit_value_t x = jit_value_get_param(function, 0);
-    jit_value_t temp = jit_insn_add(function, res, x);
-    jit_insn_store(function, res, temp);
-
-    jit_insn_return(function, res);
-
-    
-    return function;
-    */
-
-
-    
-    /*
-    gcc_jit_type* int_type =
-        gcc_jit_context_get_type(ctxt, GCC_JIT_TYPE_INT);
-    gcc_jit_type* Lf_type =
-        gcc_jit_context_get_type(ctxt, GCC_JIT_TYPE_LONG_DOUBLE);
-    gcc_jit_type* array_int_type =
-        gcc_jit_context_new_array_type(ctxt, NULL, int_type, MAX_STATES);
-    gcc_jit_type* array_Lf_type =
-        gcc_jit_context_new_array_type(ctxt, NULL, Lf_type, MAX_STATES);
-
-    gcc_jit_param* x_val =
-        gcc_jit_context_new_param(ctxt, NULL, Lf_type, "x_val");
-
-    gcc_jit_function* func =
-        gcc_jit_context_new_function(
-            ctxt, NULL, GCC_JIT_FUNCTION_EXPORTED, Lf_type, "libgccjit",
-            1, &x_val, 0
-        );
-
-    gcc_jit_block* block =
-        gcc_jit_function_new_block(func, "main_block");
-
-    gcc_jit_rvalue* result =
-        gcc_jit_lvalue_as_rvalue(
-            gcc_jit_function_new_local(func, NULL, array_Lf_type, "result"));
-    
-    gcc_jit_rvalue* x =
-        gcc_jit_param_as_rvalue(x_val);
-    */
-
     jit_value_t x = jit_value_get_param(function, 0);
     jit_value_t size = jit_value_create_nint_constant(
         function, jit_type_int, MAX_STATES * sizeof(long double));
@@ -298,8 +250,6 @@ jit_function_t get_jit_function(tables_t* tables, char* statement)
 
     jit_function_compile(function);
     jit_context_build_end(ctxt);
-
-    //jit_context_destroy(ctxt);
 
     return function;
 }

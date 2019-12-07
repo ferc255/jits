@@ -91,7 +91,15 @@ class ExpressionEvaluationTest(unittest.TestCase):
     @settings(max_examples=1000)
     @given(expr)
     def test_libjit(self, expr):
-        self._gen_test_and_verify(expr, 'libjitparser')    
+        self._gen_test_and_verify(expr, 'libjitparser')
+
+    @given(st.text(alphabet=[chr(ord('a') + x) for x in range(26)]))
+    def test_aa(self, s):
+        if len(s) == 3 and s == 'loh':
+            0/0
+        else:
+            print(s)
+        
 
     
 if __name__ == '__main__':
