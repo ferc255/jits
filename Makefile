@@ -1,4 +1,4 @@
-all: recalc libgccjit ast libjitparser nfloatbug
+all: recalc libgccjit ast libjitparser nfloatbug llvm
 
 nfloatbug: nfloatbug.c
 	gcc $< -ljit -lpthread -lm -ldl -o $@
@@ -14,6 +14,12 @@ ast: ast.c syn_tables.h my_yylex.h lex_automaton.h executions.h experiment.h
 
 libjitparser: libjitparser.c syn_tables.h my_yylex.h lex_automaton.h executions.h experiment.h
 	gcc $< -ljit -lpthread -lm -ldl -o $@
+
+llvm.o: llvm.c
+	clang $< -g `llvm-config --cflags` -c $<
+
+llvm: llvm.o
+	clang++ $< `llvm-config --cxxflags --ldflags --libs core executionengine mcjit interpreter analysis native bitwriter --system-libs` -o $@
 
 
 syn_tables.h: GT
