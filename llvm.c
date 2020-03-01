@@ -16,13 +16,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef int32_t (*funcPtr_t) (int32_t, int32_t);
+typedef long double (*funcPtr_t) (int32_t, int32_t);
 
 int main(int argc, char const *argv[]) {
     LLVMModuleRef mod = LLVMModuleCreateWithName("my_module");
 
     LLVMTypeRef param_types[] = { LLVMInt32Type(), LLVMInt32Type() };
-    LLVMTypeRef ret_type = LLVMFunctionType(LLVMInt32Type(), param_types, 2, 0);
+    LLVMTypeRef ret_type = LLVMFunctionType(LLVMX86FP80Type(), param_types, 2, 0);
     LLVMValueRef sum = LLVMAddFunction(mod, "mul", ret_type);
 
     LLVMBasicBlockRef entry = LLVMAppendBasicBlock(sum, "entry");
@@ -31,19 +31,19 @@ int main(int argc, char const *argv[]) {
     LLVMPositionBuilderAtEnd(builder, entry);
     LLVMValueRef tmp = LLVMBuildAdd(builder, LLVMGetParam(sum, 0), LLVMGetParam(sum, 1), "tmp");
 
-    LLVMTypeRef vectortype = LLVMVectorType(LLVMInt32Type(), 10);
+    LLVMTypeRef vectortype = LLVMVectorType(LLVMX86FP80Type(), 10);
     LLVMValueRef vec = LLVMGetUndef(vectortype);
-    vec = LLVMBuildInsertElement(  // vec[0] = 7;
+    vec = LLVMBuildInsertElement(  // vec[0] = 7.4;
         builder,
         vec,
-        LLVMConstInt(LLVMInt32Type(), 7, true),
+        LLVMConstReal(LLVMX86FP80Type(), 7.4),
         LLVMConstInt(LLVMInt32Type(), 0, true),
         ""
     );
-    vec = LLVMBuildInsertElement(  // vec[1] = 9;
+    vec = LLVMBuildInsertElement(  // vec[1] = -9.4;
         builder,
         vec,
-        LLVMConstInt(LLVMInt32Type(), 9, true),
+        LLVMConstReal(LLVMX86FP80Type(), -9.4),
         LLVMConstInt(LLVMInt32Type(), 1, true),
         ""
     );
@@ -59,42 +59,20 @@ int main(int argc, char const *argv[]) {
         LLVMConstInt(LLVMInt32Type(), 1, true),
         ""
     );
-    LLVMValueRef mult = LLVMBuildMul(builder, first, second, "");
-    vec = LLVMBuildInsertElement(  // vec[5] = 63;
+    LLVMValueRef mult = LLVMBuildFMul(builder, first, second, "");
+    vec = LLVMBuildInsertElement(  // vec[5] = -69.56;
         builder,
         vec,
         mult,
         LLVMConstInt(LLVMInt32Type(), 5, true),
         ""
-    );
+        );
     LLVMValueRef c = LLVMBuildExtractElement(
         builder,
         vec,
         LLVMConstInt(LLVMInt32Type(), 5, 0),
         ""
-    );
-
-
-    /*
-    LLVMValueRef b = LLVMConstInt(LLVMInt32Type(), 24, 0);
-    LLVMValueRef t_o = LLVMConstInt(LLVMInt32Type(), 21, 0);
-    LLVMValueRef one = LLVMConstInt(LLVMInt32Type(), 1, 0);
-    LLVMValueRef zero = LLVMConstInt(LLVMInt32Type(), 0, 0);
-
-
-    //LLVMTypeRef arraytype = LLVMArrayType(LLVMInt32Type(), 2);
-    LLVMTypeRef vectortype = LLVMVectorType(LLVMInt32Type(), 2);
-    //LLVMValueRef a = LLVMBuildArrayAlloca(builder, arraytype, b, "ar");
-    //LLVMValueRef a = LLVMBuildArrayMalloc(builder, arraytype, b, "ar");
-    //LLVMBuildStore(builder, b, a);
-    //LLVMValueRef va = LLVMAddGlobal(mod, vectortype, "vector122");
-
-
-    LLVMValueRef vec = LLVMGetUndef(vectortype);
-    vec = LLVMBuildInsertElement(builder, vec, b, one, "foiwejf");
-    vec = LLVMBuildInsertElement(builder, vec, t_o, zero, "foiwejf");
-    LLVMValueRef c = LLVMBuildExtractElement(builder, vec, zero, "jjkd");
-    */
+        );
 
     LLVMBuildRet(builder, c);
 
@@ -127,7 +105,7 @@ int main(int argc, char const *argv[]) {
 
     {
         funcPtr_t funcPtr = (funcPtr_t)LLVMGetPointerToGlobal(engine, sum);
-        printf("%d\n", funcPtr(x,y));
+        printf("%Lf\n", funcPtr(x,y));
     }
 
     // Write out bitcode to file
