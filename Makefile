@@ -16,7 +16,7 @@ libjitparser: libjitparser.c syn_tables.h my_yylex.h lex_automaton.h executions.
 	gcc $< -ljit -lpthread -lm -ldl -o $@
 
 llvm.o: llvm.c
-	clang $< -g `llvm-config --cflags` -c $<
+	clang $< -g `llvm-config --cflags` -c $< -Wno-unused-variable
 
 llvm: llvm.o
 	clang++ $< `llvm-config --cxxflags --ldflags --libs core executionengine mcjit interpreter analysis native bitwriter --system-libs` -o $@

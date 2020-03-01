@@ -11,7 +11,7 @@
 #include <llvm-c/Target.h>
 #include <llvm-c/Analysis.h>
 #include <llvm-c/BitWriter.h>
-
+#include <stdbool.h>
 #include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,7 +30,73 @@ int main(int argc, char const *argv[]) {
     LLVMBuilderRef builder = LLVMCreateBuilder();
     LLVMPositionBuilderAtEnd(builder, entry);
     LLVMValueRef tmp = LLVMBuildAdd(builder, LLVMGetParam(sum, 0), LLVMGetParam(sum, 1), "tmp");
-    LLVMBuildRet(builder, tmp);
+
+    LLVMTypeRef vectortype = LLVMVectorType(LLVMInt32Type(), 10);
+    LLVMValueRef vec = LLVMGetUndef(vectortype);
+    vec = LLVMBuildInsertElement(  // vec[0] = 7;
+        builder,
+        vec,
+        LLVMConstInt(LLVMInt32Type(), 7, true),
+        LLVMConstInt(LLVMInt32Type(), 0, true),
+        ""
+    );
+    vec = LLVMBuildInsertElement(  // vec[1] = 9;
+        builder,
+        vec,
+        LLVMConstInt(LLVMInt32Type(), 9, true),
+        LLVMConstInt(LLVMInt32Type(), 1, true),
+        ""
+    );
+    LLVMValueRef first = LLVMBuildExtractElement(
+        builder,
+        vec,
+        LLVMConstInt(LLVMInt32Type(), 0, true),
+        ""
+    );
+    LLVMValueRef second = LLVMBuildExtractElement(
+        builder,
+        vec,
+        LLVMConstInt(LLVMInt32Type(), 1, true),
+        ""
+    );
+    LLVMValueRef mult = LLVMBuildMul(builder, first, second, "");
+    vec = LLVMBuildInsertElement(  // vec[5] = 63;
+        builder,
+        vec,
+        mult,
+        LLVMConstInt(LLVMInt32Type(), 5, true),
+        ""
+    );
+    LLVMValueRef c = LLVMBuildExtractElement(
+        builder,
+        vec,
+        LLVMConstInt(LLVMInt32Type(), 5, 0),
+        ""
+    );
+
+
+    /*
+    LLVMValueRef b = LLVMConstInt(LLVMInt32Type(), 24, 0);
+    LLVMValueRef t_o = LLVMConstInt(LLVMInt32Type(), 21, 0);
+    LLVMValueRef one = LLVMConstInt(LLVMInt32Type(), 1, 0);
+    LLVMValueRef zero = LLVMConstInt(LLVMInt32Type(), 0, 0);
+
+
+    //LLVMTypeRef arraytype = LLVMArrayType(LLVMInt32Type(), 2);
+    LLVMTypeRef vectortype = LLVMVectorType(LLVMInt32Type(), 2);
+    //LLVMValueRef a = LLVMBuildArrayAlloca(builder, arraytype, b, "ar");
+    //LLVMValueRef a = LLVMBuildArrayMalloc(builder, arraytype, b, "ar");
+    //LLVMBuildStore(builder, b, a);
+    //LLVMValueRef va = LLVMAddGlobal(mod, vectortype, "vector122");
+
+
+    LLVMValueRef vec = LLVMGetUndef(vectortype);
+    vec = LLVMBuildInsertElement(builder, vec, b, one, "foiwejf");
+    vec = LLVMBuildInsertElement(builder, vec, t_o, zero, "foiwejf");
+    LLVMValueRef c = LLVMBuildExtractElement(builder, vec, zero, "jjkd");
+    */
+
+    LLVMBuildRet(builder, c);
 
     char *error = NULL;
     LLVMVerifyModule(mod, LLVMAbortProcessAction, &error);
