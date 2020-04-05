@@ -1,5 +1,3 @@
-//#include <libgccjit.h>
-
 #include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -19,7 +17,6 @@
 #include "my_yylex.h"
 
 #include "experiment.h"
-
 
 
 //#include "executions.h"
@@ -187,11 +184,8 @@ LLVMValueRef create_code(LLVMModuleRef module, tables_t* tables, char* statement
     LLVMValueRef func = LLVMAddFunction(module, "calculate", ret_type);
 
     LLVMBasicBlockRef entry = LLVMAppendBasicBlock(func, "entry");
-
     LLVMBuilderRef builder = LLVMCreateBuilder();
     LLVMPositionBuilderAtEnd(builder, entry);
-
-    LLVMValueRef c = LLVMConstReal(LLVMX86FP80Type(), 7.4);
 
     LLVMTypeRef vectortype = LLVMVectorType(LLVMX86FP80Type(), MAX_STATES);
     LLVMValueRef result = LLVMGetUndef(vectortype);
@@ -302,11 +296,9 @@ fn_type get_jit_function(tables_t* tables, char* statement)
         exit(EXIT_FAILURE);
     }
 
-
     return (fn_type)LLVMGetPointerToGlobal(engine, func);
 }
 
-/*
 double test_for_one_len(tables_t* tables, char* statement)
 {
     fn_type calculate = get_jit_function(tables, statement);
@@ -352,11 +344,11 @@ void measure_time(tables_t* tables, char* statements[20])
     int i;
     for (i = 0; i < MAX_STATEMENT_SIZE; i++)
     {
-        printf("libgccjit,%d,%.3lf\n", i + 1, timer[i]);
+        printf("llvm,%d,%.3lf\n", i + 1, timer[i]);
     }
     printf("\n");
 }
-*/
+
 
 int main(int argc, char* argv[])
 {
@@ -372,14 +364,12 @@ int main(int argc, char* argv[])
 
     if (argc > 1)
     {
-        fn_type calculate = get_jit_function(&tables, statements[19]);
+        fn_type calculate = get_jit_function(&tables, argv[1]);
 
         printf("%.17Lf\n", calculate(12));
-        printf("ok\n");
     }
     else
     {
-
         //test_for_one_len(&tables, statements[19]);
 
         /*
@@ -389,7 +379,7 @@ int main(int argc, char* argv[])
           printf("%Lf\n", dummy(50)); // -198.012978
         */
 
-        //measure_time(&tables, statements);
+        measure_time(&tables, statements);
     }
 
 

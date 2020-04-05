@@ -71,7 +71,7 @@ class ExpressionEvaluationTest(unittest.TestCase):
         actual = numpy.longdouble(
             process.stdout.decode('ascii').strip())
         infelicity = abs((expected - actual) / actual) if actual else 0
-        self.assertLess(infelicity, 1, (expected, actual))        
+        self.assertLess(infelicity, 1, (expected, actual))
 
     @settings(max_examples=1000)
     @given(expr)
@@ -93,14 +93,12 @@ class ExpressionEvaluationTest(unittest.TestCase):
     def test_libjit(self, expr):
         self._gen_test_and_verify(expr, 'libjitparser')
 
-    @given(st.text(alphabet=[chr(ord('a') + x) for x in range(26)]))
-    def test_aa(self, s):
-        if len(s) == 3 and s == 'loh':
-            0/0
-        else:
-            print(s)
-        
+    @settings(max_examples=1000)
+    @given(expr)
+    def test_llvm(self, expr):
+        self._gen_test_and_verify(expr, 'llvm')
 
-    
+
+
 if __name__ == '__main__':
     unittest.main()
