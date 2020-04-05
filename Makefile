@@ -15,7 +15,7 @@ ast: ast.c syn_tables.h my_yylex.h lex_automaton.h executions.h experiment.h
 libjitparser: libjitparser.c syn_tables.h my_yylex.h lex_automaton.h executions.h experiment.h
 	gcc $< -ljit -lpthread -lm -ldl -o $@
 
-llvm.o: llvm.c
+llvm.o: llvm.c syn_tables.h my_yylex.h lex_automaton.h executions.h experiment.h
 	clang $< -g `llvm-config --cflags` -c $< -Wno-unused-variable
 
 llvm: llvm.o
