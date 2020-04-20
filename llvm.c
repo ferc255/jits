@@ -12,7 +12,6 @@
 #include <stdbool.h>
 #include <inttypes.h>
 
-
 #include "values.h"
 #include "my_yylex.h"
 
@@ -299,6 +298,7 @@ fn_type get_jit_function(tables_t* tables, char* statement)
     return (fn_type)LLVMGetPointerToGlobal(engine, func);
 }
 
+
 double test_for_one_len(tables_t* tables, char* statement)
 {
     fn_type calculate = get_jit_function(tables, statement);
@@ -381,8 +381,6 @@ int main(int argc, char* argv[])
 
         measure_time(&tables, statements);
     }
-
-
 
     return (EXIT_SUCCESS);
 }
