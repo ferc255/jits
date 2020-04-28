@@ -14,7 +14,7 @@
 
 //#include "executions.h"
 void apply_prod_0(jit_function_t function, jit_value_t result,
-                  int stack_top) {}                  
+                  int stack_top) {}
 void apply_prod_1(jit_function_t function, jit_value_t result,
                   int stack_top)
 {
@@ -111,7 +111,7 @@ void apply_prod_9(jit_function_t function, jit_value_t result,
     jit_value_t minus1 = jit_insn_load_elem(
         function, result, stack_top_minus1, jit_type_float64);
     jit_insn_store_elem(function, result, stack_top_minus2, minus1);
-    
+
 }
 void (*apply[])() =
 {
@@ -147,7 +147,7 @@ jit_function_t create_code(jit_context_t ctxt, tables_t* tables,
     jit_value_t result = jit_insn_alloca(function, size);
     jit_value_t zero = jit_value_create_float64_constant(
         function, jit_type_float64, 0);
-    
+
     int i;
     for (i = 0; i < 10; i++)
     {
@@ -155,12 +155,12 @@ jit_function_t create_code(jit_context_t ctxt, tables_t* tables,
             function, jit_type_int, i);
         jit_insn_store_elem(function, result, index, zero);
     }
-    
+
     int state[MAX_STATES] = {0};
     int stack_top = 0;
 
     token_t token = my_yylex(statement);
-    
+
     while (true)
     {
         if (token.id == INVALID_TOKEN)
@@ -174,7 +174,7 @@ jit_function_t create_code(jit_context_t ctxt, tables_t* tables,
         table_cell_t cell = tables->trans[cur_state][token.id];
 
         jit_value_t stack_top_const;
-        
+
         switch (cell.action)
         {
             case AC_SHIFT:
@@ -197,11 +197,11 @@ jit_function_t create_code(jit_context_t ctxt, tables_t* tables,
                 stack_top_const = jit_value_create_nint_constant(
                     function, jit_type_int, stack_top);
                 jit_insn_store_elem(function, result, stack_top_const, rval);
-                
+
                 token = my_yylex("");
 
                 break;
-                
+
             case AC_REDUCE:
                 apply[cell.num](function, result, stack_top);
                 stack_top -= tables->grammar_size[cell.num];
@@ -209,21 +209,21 @@ jit_function_t create_code(jit_context_t ctxt, tables_t* tables,
                 state[++stack_top] = tables->
                     trans[cur_state][tables->grammar_left[cell.num]].num;
                 break;
-                
+
             case AC_ACCEPT:;
                 stack_top_const = jit_value_create_nint_constant(
                     function, jit_type_int, stack_top);
                 jit_value_t answer = jit_insn_load_elem(
                     function, result, stack_top_const, jit_type_float64);
                 jit_insn_return(function, answer);
-                
+
                 return function;
-                
+
             case AC_ERROR:
                 printf("Invalid token [id=%d] for the %d-th state.\n",
                        token.id, cur_state);
                 return function;
-        }        
+        }
     }
 
     return function;
@@ -308,12 +308,12 @@ void measure_time(tables_t* tables, char* statements[20])
 
 int main(int argc, char* argv[])
 {
-    tables_t tables = 
+    tables_t tables =
     {
         #include "syn_tables.h"
     };
 
-    char* statements[20] =
+    char* statements[] =
     {
         #include "statements.h"
     };
@@ -332,8 +332,6 @@ int main(int argc, char* argv[])
 
         measure_time(&tables, statements);
     }
-    
-    
 
     return (EXIT_SUCCESS);
 }

@@ -15,7 +15,7 @@
 //#include "executions.h"
 void apply_prod_0(gcc_jit_context* ctxt, gcc_jit_block* block,
                   gcc_jit_rvalue* result, int stack_top,
-                  gcc_jit_type* int_type) {}                  
+                  gcc_jit_type* int_type) {}
 void apply_prod_1(gcc_jit_context* ctxt, gcc_jit_block* block,
                   gcc_jit_rvalue* result, int stack_top,
                   gcc_jit_type* int_type)
@@ -196,13 +196,13 @@ void create_code(gcc_jit_context* ctxt, tables_t* tables, char* statement)
     gcc_jit_rvalue* result =
         gcc_jit_lvalue_as_rvalue(
             gcc_jit_function_new_local(func, NULL, array_Lf_type, "result"));
-    
+
     gcc_jit_rvalue* x =
         gcc_jit_param_as_rvalue(x_val);
 
     int state[MAX_STATES] = {0};
     int stack_top = 0;
-  
+
     token_t token = my_yylex(statement);
 
     while (true)
@@ -216,7 +216,7 @@ void create_code(gcc_jit_context* ctxt, tables_t* tables, char* statement)
 
         int cur_state = state[stack_top];
         table_cell_t cell = tables->trans[cur_state][token.id];
-        
+
         switch (cell.action)
         {
             case AC_SHIFT:
@@ -224,7 +224,7 @@ void create_code(gcc_jit_context* ctxt, tables_t* tables, char* statement)
                 state[stack_top] = cell.num;
 
                 gcc_jit_rvalue* rval;
-                
+
                 if (token.data != X)
                 {
                     rval = gcc_jit_context_new_rvalue_from_double(
@@ -249,7 +249,7 @@ void create_code(gcc_jit_context* ctxt, tables_t* tables, char* statement)
                 token = my_yylex("");
 
                 break;
-                
+
             case AC_REDUCE:
                 apply[cell.num](ctxt, block,
                                 result, stack_top,
@@ -259,7 +259,7 @@ void create_code(gcc_jit_context* ctxt, tables_t* tables, char* statement)
                 state[++stack_top] = tables->
                     trans[cur_state][tables->grammar_left[cell.num]].num;
                 break;
-                
+
             case AC_ACCEPT:
                 gcc_jit_block_end_with_return(
                     block,
@@ -275,14 +275,14 @@ void create_code(gcc_jit_context* ctxt, tables_t* tables, char* statement)
                         )
                     )
                 );
-             
+
                 return;
-                
+
             case AC_ERROR:
                 printf("Invalid token [id=%d] for the %d-th state.\n",
                        token.id, cur_state);
                 return;
-        }        
+        }
     }
 }
 
@@ -372,12 +372,12 @@ void measure_time(tables_t* tables, char* statements[20])
 
 int main(int argc, char* argv[])
 {
-    tables_t tables = 
+    tables_t tables =
     {
         #include "syn_tables.h"
     };
 
-    char* statements[20] =
+    char* statements[] =
     {
         #include "statements.h"
     };
@@ -401,8 +401,8 @@ int main(int argc, char* argv[])
 
         measure_time(&tables, statements);
     }
-    
-    
+
+
 
     return (EXIT_SUCCESS);
 }

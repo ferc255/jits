@@ -357,7 +357,7 @@ int main(int argc, char* argv[])
         #include "syn_tables.h"
     };
 
-    const char* statements[20] =
+    const char* statements[] =
     {
         #include "statements.h"
     };
